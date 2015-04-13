@@ -2,7 +2,7 @@
 
 cd `dirname $0`
 
-if ( "${APPS_TEMPLATE_BASE}" == "" ); then
+if ( "$APPS_TEMPLATE_BASE" == "" ); then
     echo "Please set the following enviroment variables:"
     echo "APPS_TEMPLATE_BASE: ${APPS_TEMPLATE_BASE}"
     echo "NAMENODE_FS: ${NAMENODE_FS}"
