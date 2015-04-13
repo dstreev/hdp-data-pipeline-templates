@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-app xmlns="uri:oozie:workflow:0.5"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+              xsi:schemaLocation="uri:oozie:workflow:0.5 http://oozie.apache.org/schemas/workflow-0.5
+                uri:oozie:hive-action:0.5  http://oozie.apache.org/schemas/hive-action-0.5
+                uri:oozie:distcp-action:0.2  http://oozie.apache.org/schemas/distcp-action-0.2
+                uri:oozie:email-action:0.2 http://oozie.apache.org/schemas/email-action-0.2
+                uri:oozie:sqoop-action:0.4 http://oozie.apache.org/schemas/sqoop-action-0.4
+                uri:oozie:shell-action:0.3 http://oozie.apache.org/schemas/shell-action-0.3
+                uri:oozie:ssh-action:0.2 http://oozie.apache.org/schemas/ssh-action-0.2
+                uri:oozie:sla:0.2 http://oozie.apache.org/schemas/sla-0.2"
+              name="HDFS File-Migration-${id} ${source} to ${destination}">
+
+    <start to="move-data"/>
+
+
+    <action name="move-data">
+        <fs>
+            <name-node></name-node>
+            <move source="${source}" target="${destination}"/>
+        </fs>
+        <ok to="ok"/>
+        <error to="failure"/>
+    </action>
+
+    <action name="ok">
+        <email xmlns="uri:oozie:email-action:0.2">
+            <to>${successEmailTo}</to>
+            <subject>OK</subject>
+            <body></body>
+        </email>
+        <ok to="done"/>
+        <error to="done"/>
+    </action>
+
+    <action name="failure">
+        <email xmlns="uri:oozie:email-action:0.2">
+            <to>${failureEmailTo}</to>
+            <subject>Error</subject>
+            <body>Failed.
+                Workflow Failed: message[${wf:errorMessage(wf:lastErrorNode())}]
+            </body>
+        </email>
+        <ok to="kill"/>
+        <error to="kill"/>
+    </action>
+
+    <kill name="kill">
+        <message>"Error: message[${wf:errorMessage(wf:lastErrorNode())}]"
+        </message>
+    </kill>
+
+    <end name="done"/>
+</workflow-app>
