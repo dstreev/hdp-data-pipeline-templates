@@ -17,7 +17,7 @@
 
     <action name="move-data">
         <fs>
-            <name-node></name-node>
+            <name-node>${namenode}</name-node>
             <move source="${source}" target="${destination}"/>
         </fs>
         <ok to="ok"/>
