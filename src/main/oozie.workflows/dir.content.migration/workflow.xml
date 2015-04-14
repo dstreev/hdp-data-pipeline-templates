@@ -24,7 +24,7 @@
     <action name="move-data">
         <fs>
             <name-node>${namenode}</name-node>
-            <move source="${sourceDir}\*.*" target="${destinationDir}"/>
+            <move source="${sourceDir}/*.*" target="${destinationDir}"/>
         </fs>
         <ok to="ok"/>
         <error to="failure"/>
