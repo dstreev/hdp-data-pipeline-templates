@@ -22,4 +22,4 @@ cd ../src/main
 #    hdfs dfs -test -d ${APPS_TEMPLATE_BASE}/${i} && echo "${APPS_TEMPLATE_BASE}/${i} exists" || hdfs dfs -mkdir -p ${APPS_TEMPLATE_BASE}/${i}
 #done
 
-hdfs dfs -copyFromLocal -f . ${APP_TEMPLATES_BASE}
+hdfs dfs -copyFromLocal -f ./* ${APP_TEMPLATES_BASE}
