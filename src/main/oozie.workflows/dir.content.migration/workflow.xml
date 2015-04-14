@@ -10,7 +10,7 @@
                 uri:oozie:shell-action:0.3 http://oozie.apache.org/schemas/shell-action-0.3
                 uri:oozie:ssh-action:0.2 http://oozie.apache.org/schemas/ssh-action-0.2
                 uri:oozie:sla:0.2 http://oozie.apache.org/schemas/sla-0.2"
-              name="HDFS File-Migration-${id} ${sourceDir} to ${destinationDir}">
+              name="HDFS Directory Content Migration-${id} ${sourceDir} to ${destinationDir}">
 
     <start to="check-file"/>
 
