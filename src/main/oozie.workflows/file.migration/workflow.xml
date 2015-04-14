@@ -10,13 +10,13 @@
                 uri:oozie:shell-action:0.3 http://oozie.apache.org/schemas/shell-action-0.3
                 uri:oozie:ssh-action:0.2 http://oozie.apache.org/schemas/ssh-action-0.2
                 uri:oozie:sla:0.2 http://oozie.apache.org/schemas/sla-0.2"
-              name="HDFS File-Migration-${id} ${source} to ${destination}">
+              name="HDFS File-Migration-${id} ${sourceDir} to ${destinationDir}">
 
     <start to="check-file"/>
 
     <decision name="check-file">
         <switch>
-            <case to="move-data">${fs:dirSize(concat(namenode, '/user/marketops/barclays/indices')) gt 0}</case>
+            <case to="move-data">${fs:dirSize(concat(namenode, sourceDir)) gt 0}</case>
             <default to="nothing-to-do"/>
         </switch>
     </decision>
@@ -24,7 +24,7 @@
     <action name="move-data">
         <fs>
             <name-node>${namenode}</name-node>
-            <move source="${source}" target="${destination}"/>
+            <move source="${sourceDir}" target="${destinationDir}"/>
         </fs>
         <ok to="ok"/>
         <error to="failure"/>
@@ -33,7 +33,7 @@
     <action name="nothing-to-do">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${successEmailTo}</to>
-            <subject>No Files @ ${source}</subject>
+            <subject>No Files in ${sourceDir} to Migrate</subject>
             <body>Nothing to transfer at this time.</body>
         </email>
         <ok to="done"/>
@@ -43,8 +43,8 @@
     <action name="ok">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${successEmailTo}</to>
-            <subject>OK</subject>
-            <body></body>
+            <subject>File Migration Succeeded</subject>
+            <body>Files migrated from ${sourceDir} to ${destinationDir}</body>
         </email>
         <ok to="done"/>
         <error to="done"/>
@@ -53,8 +53,8 @@
     <action name="failure">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${failureEmailTo}</to>
-            <subject>Error</subject>
-            <body>Failed.
+            <subject>File Migration Error</subject>
+            <body>Failed to Migrate Files in ${sourceDir} to ${destinationDir}.
                 Workflow Failed: message[${wf:errorMessage(wf:lastErrorNode())}]
             </body>
         </email>
