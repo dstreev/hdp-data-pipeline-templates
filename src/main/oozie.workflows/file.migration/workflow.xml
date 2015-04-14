@@ -16,7 +16,7 @@
 
     <decision name="check-file">
         <switch>
-            <case to="move-data">${fs:exists(concat(namenode, source)) == "true"}</case>
+            <case to="move-data">${fs:dirSize(concat(namenode, '/user/marketops/barclays/indices')) > 0}</case>
             <default to="nothing-to-do"/>
         </switch>
     </decision>
