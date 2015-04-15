@@ -21,10 +21,15 @@
         </switch>
     </decision>
 
+    <!-- TODO: Add check for destination direction.  If not exists, create. -->
+
     <action name="move-data">
         <fs>
             <name-node>${namenode}</name-node>
-            <move source="${sourceDir}/*.*" target="${destinationDir}"/>
+            <!--<mkdir path="${destinationDir}/${year}${month}${day}.${hour}${minute}${second}"/>-->
+            <move source="${sourceDir}" target="${destinationDir}/${year}${month}${day}.${hour}${minute}${second}"/>
+            <mkdir path="${sourceDir}"/>
+            <chmod path="${sourceDir}" permissions="770"/>
         </fs>
         <ok to="ok"/>
         <error to="failure"/>

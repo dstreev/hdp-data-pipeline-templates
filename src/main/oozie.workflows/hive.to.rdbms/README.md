@@ -10,7 +10,7 @@ The file(s) created by the Hive query need to be in Text format and match the fi
 
 1. Copy this workflow to HDFS
 2. Put a copy of your hive-site.xml on HDFS and identify the location in the properties
-3. Build a properties file, based on this [template](../../../test/resources/workflow/hive.to.rdbms.properties) 
+3. Build a properties file, based on this [template](../../../test/resources/oozie.workflow/hive.to.rdbms.properties) 
 4. Copy the RDBMS jdbc jar file the the workflows *lib* directory.  You will need to create this.
 5. Copy the referenced hive query file to the workflows *hive* directory.  You will need to create this.
 

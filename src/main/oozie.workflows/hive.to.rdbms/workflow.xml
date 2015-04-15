@@ -12,15 +12,20 @@
                 uri:oozie:sla:0.2 http://oozie.apache.org/schemas/sla-0.2"
               name="Hive-To-RDBMS-${id}">
 
-    <start to="hive-to-transmit-file"/>
+    <start to="build-temp-table"/>
 
-
-    <action name="build-temp-tables">
+    <action name="build-temp-table">
         <hive xmlns="uri:oozie:hive-action:0.5">
             <job-tracker>${jobtracker}</job-tracker>
             <name-node>${namenode}</name-node>
 
             <job-xml>${namenode}${hdfsHiveSiteXmlLocation}</job-xml>
+
+            <!-- This export directory should match the directory that Hive will Write to -->
+
+            <prepare>
+                <delete path="${exportDir}"/>
+            </prepare>
 
             <configuration>
                 <property>
@@ -33,18 +38,19 @@
                 </property>
             </configuration>
 
-            <script>hive/${hiveSqlFile}</script>
+            <script>hive/hive-${type}-export.sql</script>
             <param>hiveParam1=${hiveParam1}</param>
             <param>hiveParam2=${hiveParam2}</param>
             <param>hiveParam3=${hiveParam3}</param>
-            <param>hiveParam4=${hiveParam4}</param>
-            <param>hiveParam5=${hiveParam5}</param>
+            <param>nullString=${nullString}</param>
+            <param>fieldsTerminatedBy=${fieldsTerminatedBy}</param>
+            <param>exportDir=${exportDir}</param>
             <param>today=${year}-${month}-${day}</param>
             <param>year=${year}</param>
             <param>month=${month}</param>
             <param>day=${day}</param>
         </hive>
-        <ok to="sqoop-export-data"/>
+        <ok to="export-data"/>
         <error to="failure"/>
     </action>
 
@@ -55,17 +61,7 @@
         <sqoop xmlns="uri:oozie:sqoop-action:0.4">
             <job-tracker>${jobtracker}</job-tracker>
             <name-node>${namenode}</name-node>
-            <!--
-            <prepare>
-                <delete path="${bunitSqoopPath}/${wf:actionData('java-node')['FOLDERNAME']}"/>
-            </prepare>
-            <configuration>
-                <property>
-                    <name>mapreduce.job.queue.name</name>
-                    <value>${queueName}</value>
-                </property>
-            </configuration>
-            -->
+
             <arg>export</arg>
             <arg>--connect</arg>
             <arg>${jdbcUrl}/${jdbcDatabase}</arg>
@@ -78,23 +74,23 @@
             <arg>--table</arg>
             <arg>${jdbcTable}</arg>
             <arg>--m</arg>
-            <arg>${sqoopParallelism}</arg>
+            <arg>${parallelism}</arg>
             <arg>--null-string</arg>
             <arg>${nullString}</arg>
             <arg>--null-non-string</arg>
             <arg>${nullString}</arg>
             <arg>--input-fields-terminated-by</arg>
-            <arg>${fieldTerminatedBy}</arg>
+            <arg>${fieldsTerminatedBy}</arg>
         </sqoop>
 
-        <ok to="success"/>
+        <ok to="ok"/>
         <error to="failure"/>
     </action>
 
     <action name="ok">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${successEmailTo}</to>
-            <subject>OK</subject>
+            <subject>Hive Export to RDBMS for: ${type} Successful</subject>
             <body></body>
         </email>
         <ok to="done"/>
@@ -104,7 +100,7 @@
     <action name="failure">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${failureEmailTo}</to>
-            <subject>Error</subject>
+            <subject>Hive Export to RDBMS for: ${type} Failed</subject>
             <body>Failed.
                 Workflow Failed: message[${wf:errorMessage(wf:lastErrorNode())}]
             </body>
