@@ -18,7 +18,7 @@
     <action name="stage">
         <!-- Action -->
         <sub-workflow>
-            <app-path>${namenode}${apps.dir}/oozie.workflows/dir.content.migration</app-path>
+            <app-path>${namenode}${appsDir}/oozie.workflows/dir.content.migration</app-path>
             <propagate-configuration/>
         </sub-workflow>
         <ok to="process"/>
@@ -28,7 +28,7 @@
     <action name="process">
         <!-- Action -->
         <sub-workflow>
-            <app-path>${namenode}${apps.dir}/oozie.workflows/hiveql</app-path>
+            <app-path>${namenode}${appsDir}/oozie.workflows/hiveql</app-path>
             <propagate-configuration/>
         </sub-workflow>
         <ok to="ok"/>
