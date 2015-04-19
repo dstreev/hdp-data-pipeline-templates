@@ -33,6 +33,10 @@
                     <name>tez.queue.name</name>
                     <value>${queueName}</value>
                 </property>
+                <property>
+                    <name>hive.execution.engine</name>
+                    <value>${hiveExecutionEngine}</value>
+                </property>
             </configuration>
 
             <script>hive/${hqlFile}</script>
