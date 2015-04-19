@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coordinator-app name="${id}" frequency="${frequency}" start="${startTime}" end="${endTime}" timezone="${timeZone}" xmlns="uri:oozie:coordinator:0.1">
+    <action>
+        <workflow>
+            <app-path>${coordinatorWorkflow}</app-path>
+        </workflow>
+    </action>
+</coordinator-app>
