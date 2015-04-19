@@ -10,22 +10,19 @@
                 uri:oozie:shell-action:0.3 http://oozie.apache.org/schemas/shell-action-0.3
                 uri:oozie:ssh-action:0.2 http://oozie.apache.org/schemas/ssh-action-0.2
                 uri:oozie:sla:0.2 http://oozie.apache.org/schemas/sla-0.2"
-              name="Hive-To-RDBMS-${id}">
+              name="Hive QL - ${id}">
 
-    <start to="build-temp-table"/>
+    <start to="start"/>
 
-    <action name="build-temp-table">
+
+    <action name="start">
+
+        <!-- Action -->
         <hive xmlns="uri:oozie:hive-action:0.5">
             <job-tracker>${jobtracker}</job-tracker>
             <name-node>${namenode}</name-node>
 
             <job-xml>${namenode}${hdfsHiveSiteXmlLocation}</job-xml>
-
-            <!-- This export directory should match the directory that Hive will Write to -->
-
-            <prepare>
-                <delete path="${exportDir}"/>
-            </prepare>
 
             <configuration>
                 <property>
@@ -38,11 +35,12 @@
                 </property>
             </configuration>
 
-            <script>hive/hive-${type}-export.sql</script>
-
+            <script>hive/${hqlFile}</script>
+            <!-- Generic Params -->
             <param>hiveParam1=${hiveParam1}</param>
             <param>hiveParam2=${hiveParam2}</param>
             <param>hiveParam3=${hiveParam3}</param>
+            <!-- Details (optional) -->
             <param>nullString=${nullString}</param>
             <param>fieldsTerminatedBy=${fieldsTerminatedBy}</param>
             <param>exportDir=${exportDir}</param>
@@ -50,58 +48,28 @@
             <param>year=${year}</param>
             <param>month=${month}</param>
             <param>day=${day}</param>
+
         </hive>
-        <ok to="export-data"/>
-        <error to="failure"/>
-    </action>
-
-    <!--
-       move data from input directory to history directory
-    -->
-    <action name="export-data">
-        <sqoop xmlns="uri:oozie:sqoop-action:0.4">
-            <job-tracker>${jobtracker}</job-tracker>
-            <name-node>${namenode}</name-node>
-
-            <arg>export</arg>
-            <arg>--connect</arg>
-            <arg>${jdbcUrl}/${jdbcDatabase}</arg>
-            <arg>--username</arg>
-            <arg>${jdbcUsername}</arg>
-            <arg>--password</arg>
-            <arg>${jdbcPassword}</arg>
-            <arg>--export-dir</arg>
-            <arg>${exportDir}</arg>
-            <arg>--table</arg>
-            <arg>${jdbcTable}</arg>
-            <arg>--m</arg>
-            <arg>${parallelism}</arg>
-            <arg>--null-string</arg>
-            <arg>${nullString}</arg>
-            <arg>--null-non-string</arg>
-            <arg>${nullString}</arg>
-            <arg>--input-fields-terminated-by</arg>
-            <arg>${fieldsTerminatedBy}</arg>
-        </sqoop>
 
         <ok to="ok"/>
-        <error to="failure"/>
+        <error to="error"/>
     </action>
+
 
     <action name="ok">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${successEmailTo}</to>
-            <subject>Hive Export to RDBMS for: ${type} Successful</subject>
+            <subject>Hive QL Succeeded for ${id}</subject>
             <body></body>
         </email>
         <ok to="done"/>
         <error to="done"/>
     </action>
 
-    <action name="failure">
+    <action name="error">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${failureEmailTo}</to>
-            <subject>Hive Export to RDBMS for: ${type} Failed</subject>
+            <subject>Hive QL Failed for ${id}</subject>
             <body>Failed.
                 Workflow Failed: message[${wf:errorMessage(wf:lastErrorNode())}]
             </body>

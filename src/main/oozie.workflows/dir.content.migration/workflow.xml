@@ -12,18 +12,48 @@
                 uri:oozie:sla:0.2 http://oozie.apache.org/schemas/sla-0.2"
               name="HDFS Directory Content Migration-${id} ${sourceDir} to ${destinationDir}">
 
+    <!--
+       This workflow is intended to move the contents of one directory into another directory.
+
+       If files of similar name exist in the destination, the move will fail.  In which case,
+       a sub-directory will be created and the contents move into the target sub-directory.
+
+       USE CASE:  Night feed of files to a directory that need to be moved to another directory
+            for processing.  The incoming files are 'usually' unique, but may not be.  When they
+            not, they are move to a sub-directory to ensure uninterrupted processing.
+
+            At first, I was creating a new sub-directory for each import, but the problem is that
+            many of the transfer are only a single file.  And creating a directory for a single
+            file, each time the process runs, will lead to a performance impact when reading through
+            all the files by either MR or TEZ.  Hence, we only create a sub-directory when there
+            is a naming conflict.
+
+       WARNING: Because you COULD have duplicate files, you need to ensure the downstream logic handles
+            this by extracting only 'distinct' records, to prevent duplicates in the target tables.
+    -->
+
     <start to="check-file"/>
 
     <decision name="check-file">
+        <!-- Check that there are some files in the source directory -->
         <switch>
             <case to="move-data">${fs:dirSize(concat(namenode, sourceDir)) gt 0}</case>
             <default to="nothing-to-do"/>
         </switch>
     </decision>
 
-    <!-- TODO: Add check for destination direction.  If not exists, create. -->
-
     <action name="move-data">
+        <fs>
+            <name-node>${namenode}</name-node>
+            <!--<mkdir path="${destinationDir}/${year}${month}${day}.${hour}${minute}${second}"/>-->
+            <move source="${sourceDir}/*.*" target="${destinationDir}"/>
+        </fs>
+        <ok to="ok"/>
+        <!-- Failure will happen when a file conflict happens -->
+        <error to="move-data-via-sub-dir"/>
+    </action>
+
+    <action name="move-data-via-sub-dir">
         <fs>
             <name-node>${namenode}</name-node>
             <!--<mkdir path="${destinationDir}/${year}${month}${day}.${hour}${minute}${second}"/>-->
