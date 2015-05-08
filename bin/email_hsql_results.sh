@@ -14,6 +14,11 @@ while [ $# -gt 0 ]; do
       SUBJECT=$1
       shift
       ;;
+    --from)
+      shift
+      FROM=$1
+      shift
+      ;;
     --date)
       shift
       DT=$1
@@ -48,7 +53,7 @@ fi
 TEMP_FILE=`mktemp`
 
 echo "Subject: ${SUBJECT} for ${DT}" > $TEMP_FILE
-echo "from:WRe Service Account<wre@weisshornre.com>" >> $TEMP_FILE
+echo "from: ${FROM}" >> $TEMP_FILE
 echo "to:${EMAIL}" >> $TEMP_FILE
 
 ${BEEWRAP_SCRIPT} --hivevar TARGET_DATE=$DT --outputformat=dsv --delimiterForDSV=, -f $SQL_FILE | grep -v "^0\|^\." >> $TEMP_FILE
