@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Run a HSQL Script and email results.
+
 while [ $# -gt 0 ]; do
   case "$1" in
     --email)
