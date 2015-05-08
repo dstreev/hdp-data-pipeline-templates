@@ -95,7 +95,7 @@ while read line ; do
     # Skip Commented lines
     if [ "${s1:0:${#s2}}" != "$s2" ]; then
 
-        SCRIPT="${ar[0]}"
+        HSQL_SCRIPT="${ar[0]}"
 #        TARGET_FILENAME="${ar[1]}"
         REMOTE_TARGET_DIR="${ar[2]}"
 
@@ -105,9 +105,9 @@ while read line ; do
             TARGET_FILENAME="${ar[1]}.csv"
         fi
 
-        echo "Processing ${SCRIPT} - ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
+        echo "Processing ${HSQL_SCRIPT} - ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
 
-        HIVE_CMD="${BEEWRAP_SCRIPT} --hivevar ${DATE_VAR}=${GOOD_DT} --outputFormat=dsv --delimiterForDSV=';' --showHeader=true -f ${SCRIPT} 2> /dev/null | grep -P -v '(^0\:\ .*)|(^\.\ \.\ .*)' > ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
+        HIVE_CMD="${BEEWRAP_SCRIPT} --hivevar ${DATE_VAR}=${GOOD_DT} --outputFormat=dsv --delimiterForDSV=';' --showHeader=true -f ${HSQL_SCRIPT} 2> /dev/null | grep -P -v '(^0\:\ .*)|(^\.\ \.\ .*)' > ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
 
         echo "Building Export with: ${HIVE_CMD}"
 
