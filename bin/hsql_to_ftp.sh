@@ -113,10 +113,8 @@ while read line ; do
 
         eval $HIVE_CMD
 
-        echo "Posting ${BASE_OUTPUT_DIR}/${TARGET_FILENAME} to FTP Site"
+        echo "Posting ${BASE_OUTPUT_DIR}/${TARGET_FILENAME} to FTP Sites directory: ${REMOTE_TARGET_DIR}"
         # Send file to FTP Site
-        #ftp -in ftp://$FTP_USER:$FTP_PASSWORD@$FTP_HOST/Data/inbound /tmp/$BASE_OUTPUT.csv
-
         ftp -in <<EOF
         open $FTP_HOST
         user $FTP_USER $FTP_PASSWORD
