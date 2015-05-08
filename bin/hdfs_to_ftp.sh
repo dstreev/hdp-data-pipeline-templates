@@ -91,6 +91,7 @@ while read line ; do
         echo "Get file ${FULL_FILE} from HDFS Directory: ${SOURCE_DIR}"
         hdfs dfs -get ${SOURCE_DIR}/${FULL_FILE} ${BASE_OUTPUT_DIR}
 
+        echo "Posting ${BASE_OUTPUT_DIR}/${FULL_FILE} to FTP Sites directory: ${TARGET_DIR}"
 
         ftp -in <<EOF
         open $FTP_HOST

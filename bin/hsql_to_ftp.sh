@@ -11,6 +11,8 @@
 
 # Whether to add date as an extension to the output file.
 DATE_EXT=true
+HEADER=true
+HEADER_TEMPLATE=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -32,6 +34,15 @@ while [ $# -gt 0 ]; do
       shift
       FEED_FILE=$1
       shift
+      ;;
+    --header_off)
+      shift
+      HEADER=false
+      ;;
+    --header_template)
+      shift
+      HEADER=false
+      HEADER_TEMPLATE=true
       ;;
     --date)
       shift
@@ -107,11 +118,23 @@ while read line ; do
 
         echo "Processing ${HSQL_SCRIPT} - ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
 
-        HIVE_CMD="${BEEWRAP_SCRIPT} --hivevar ${DATE_VAR}=${GOOD_DT} --outputFormat=dsv --delimiterForDSV=';' --showHeader=true -f ${HSQL_SCRIPT} 2> /dev/null | grep -P -v '(^0\:\ .*)|(^\.\ \.\ .*)' > ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
+        HIVE_CMD="${BEEWRAP_SCRIPT} --hivevar ${DATE_VAR}=${GOOD_DT} --outputFormat=dsv --delimiterForDSV=';' --showHeader=${HEADER} -f ${HSQL_SCRIPT} 2> /dev/null | grep -P -v '(^0\:\ .*)|(^\.\ \.\ .*)' > ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
 
         echo "Building Export with: ${HIVE_CMD}"
 
         eval $HIVE_CMD
+
+        if [ "${HEADER_TEMPLATE}" == "true" ]; then
+            HEADER_TEMPLATE_FILE="${ar[3]}"
+            # Create temp file
+            TARGET_FILE_TMP=${TARGET_FILENAME}_new
+            # Copy Template Header to Temp File
+            cp -f ${HEADER_TEMPLATE_FILE} ${BASE_OUTPUT_DIR}/${TARGET_FILE_TMP}
+            # Append Output File to Temp File
+            cat ${BASE_OUTPUT_DIR}/${TARGET_FILENAME} >> ${BASE_OUTPUT_DIR}/${TARGET_FILE_TMP}
+            # Overwrite Original with Cat'd file.
+            cp -f ${BASE_OUTPUT_DIR}/${TARGET_FILE_TMP} ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}
+        fi
 
         echo "Posting ${BASE_OUTPUT_DIR}/${TARGET_FILENAME} to FTP Sites directory: ${REMOTE_TARGET_DIR}"
         # Send file to FTP Site
