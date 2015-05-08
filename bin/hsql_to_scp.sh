@@ -137,7 +137,7 @@ while read line ; do
 
         echo "Posting ${BASE_OUTPUT_DIR}/${TARGET_FILENAME} to SFTP Sites directory: ${REMOTE_TARGET_DIR}"
         # Send file to SFTP Site
-
+        echo "SSH Settings:  ${SSH_USER}, ${SSH_HOST}, ${SSH_KEY_FILE}, ${SSH_PORT}"
         # Authenication is based on Key Exchange.
         scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${BASE_OUTPUT_DIR}/${TARGET_FILENAME} ${SSH_USER}@${SSH_HOST}:${REMOTE_TARGET_DIR}
 
