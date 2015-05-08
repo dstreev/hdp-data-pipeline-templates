@@ -1,0 +1,3 @@
+Add this directory to your environment path for ease of use.
+
+Although, that doesn't effect 'cron' usage...
