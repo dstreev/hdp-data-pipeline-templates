@@ -50,13 +50,16 @@ if [ "${DT}" == "" ]; then
     DT=`date +%Y-%m-%d`
 fi
 
+echo "Target Date: ${DT}"
+echo "SQL File: ${SQL_FILE}"
+
 TEMP_FILE=`mktemp`
 
 echo "Subject: ${SUBJECT} for ${DT}" > $TEMP_FILE
 echo "from: ${FROM}" >> $TEMP_FILE
-echo "to:${EMAIL}" >> $TEMP_FILE
+echo "to: ${EMAIL}" >> $TEMP_FILE
 
-${BEEWRAP_SCRIPT} --hivevar TARGET_DATE=$DT --outputformat=dsv --delimiterForDSV=, -f $SQL_FILE | grep -v "^0\|^\." >> $TEMP_FILE
+${BEEWRAP_SCRIPT} --hivevar TARGET_DATE=${DT} --outputformat=dsv --delimiterForDSV=, -f ${SQL_FILE} | grep -v "^0\|^\." >> $TEMP_FILE
 
 /usr/sbin/sendmail -t < $TEMP_FILE
 
