@@ -138,6 +138,8 @@ while read line ; do
             cp -f ${BASE_OUTPUT_DIR}/${TARGET_FILE_TMP} ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}
         fi
 
+        sleep 5
+
         echo "Posting ${BASE_OUTPUT_DIR}/${TARGET_FILENAME} to FTP Sites directory: ${REMOTE_TARGET_DIR}"
         # Send file to FTP Site
         ftp -in <<EOF

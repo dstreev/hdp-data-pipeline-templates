@@ -61,5 +61,7 @@ echo "to: ${EMAIL}" >> $TEMP_FILE
 
 ${BEEWRAP_SCRIPT} --hivevar TARGET_DATE=${DT} --outputformat=dsv --delimiterForDSV=, -f ${SQL_FILE} | grep -v "^0\|^\." >> $TEMP_FILE
 
+sleep 5
+
 /usr/sbin/sendmail -t < $TEMP_FILE
 
