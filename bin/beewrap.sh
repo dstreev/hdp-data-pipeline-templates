@@ -7,4 +7,6 @@ fi
 
 . ${HOME}/.bee-env.sh
 
+echo "Beeline Call: beeline -u $URL -$USER ${@}"
+
 beeline -u $URL -n $USER "$@"
