@@ -97,10 +97,10 @@ while read line ; do
 
         SOURCE_DIR="${ar[0]}"
 
-        SOURCE_FILENAME="${ar[1]}.${DT}.csv"
+        SOURCE_FILENAME="${ar[1]}_${DT}.csv"
 
         if [ "${DATE_EXT}" == "true" ]; then
-            TARGET_FILENAME="${ar[1]}.${DT}.csv"
+            TARGET_FILENAME="${ar[1]}_${DT}.csv"
         else
             TARGET_FILENAME="${ar[1]}.csv"
         fi
