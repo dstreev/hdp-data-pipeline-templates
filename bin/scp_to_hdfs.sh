@@ -1,17 +1,15 @@
 #!/bin/bash
 
 #######
-# Get file from an HDFS site and post it to scp site.
-#
+# Get file from an FTP site and put it on HDFS.
 #
 # Feed file format:
-#   HDFS_SOURCE_DIR FILE_PREFIX FTP_TARGET_DIR
-#   <source_dir> <file_prefix> <ftp_target_dir>
+#   FTP_SOURCE_DIR FILE_PREFIX HDFS_TARGET_DIR
+#   /Data/Outbound/Curves USD_TREASURY_ /user/wre/wrelib/curves
 #######
 
 DATE_WITHOUT_DASHES=false
-# Whether to add date as an extension to the output file.
-DATE_EXT=true
+YESTERDAY=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -35,25 +33,20 @@ while [ $# -gt 0 ]; do
       DT=$1
       shift
       ;;
-    --no_date_ext)
+    --yesterday)
       shift
-      DATE_EXT=false
+      YESTERDAY=true
       ;;
     --date_without_dashes)
         shift
         DATE_WITHOUT_DASHES=true
         ;;
-    --date_var)
-      shift
-      DATE_VAR=$1
-      shift
-      ;;
     --check)
       CHECK="yes"
       shift
       ;;
     --help)
-      echo "TODO.... Usage: $0 --date <date in yyyyMMdd> --help"
+      echo "Usage: $0 --date <date in yyyyMMdd> --help"
       exit -1
       ;;
     *)
@@ -62,8 +55,11 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+if [ "${YESTERDAY}" == "true" ]; then
+    DT=`date --date='-1 day' +%Y%m%d`
+fi
+
 if [ "$DT" == "" ]; then
-    # Set to current date by default when not specified
     DT=`date +%Y%m%d`
 fi
 
@@ -74,14 +70,14 @@ else
     exit -1
 fi
 
-# Create a temp directory
-BASE_OUTPUT_DIR=$( mktemp -d /tmp/transfer_XXXXXXX )
-
 if [ "${DATE_WITHOUT_DASHES}" == "true" ]; then
     GOOD_DT="${DT}"
 else
     GOOD_DT="${DT:0:4}-${DT:4:2}-${DT:6:2}"
 fi
+
+# Create a temp directory
+BASE_OUTPUT_DIR=$( mktemp -d /tmp/transfer_XXXXXXX )
 
 exec< $FEED_FILE
 
@@ -96,21 +92,20 @@ while read line ; do
     if [ "${s1:0:${#s2}}" != "$s2" ]; then
 
         SOURCE_DIR="${ar[0]}"
+        PREFIX="${ar[1]}"
+        TARGET_DIR="${ar[2]}"
 
-        SOURCE_FILENAME="${ar[1]}.${DT}.csv"
+        # Fetch Files from the SCP Site.
+        FULL_FILE="${PREFIX}${GOOD_DT}.csv"
 
-        if [ "${DATE_EXT}" == "true" ]; then
-            TARGET_FILENAME="${ar[1]}.${DT}.csv"
-        else
-            TARGET_FILENAME="${ar[1]}.csv"
-        fi
+        echo "Getting ${FULL_FILE} files from scp ${SOURCE_DIR}"
 
-        REMOTE_TARGET_DIR="${ar[2]}"
+        scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${SOURCE_DIR}/${TARGET_FILENAME} ${BASE_OUTPUT_DIR}
 
-        hdfs dfs -get ${SOURCE_DIR}/${SOURCE_FILENAME} ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}
-
-        # Authenication is based on Key Exchange.
-        scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${BASE_OUTPUT_DIR}/${TARGET_FILENAME} ${SSH_USER}@${SSH_HOST}:${REMOTE_TARGET_DIR}
+        echo "Remove old versions of $TARGET_DIR/$FULL_FILE"
+        hdfs dfs -rm $TARGET_DIR/$FULL_FILE
+        echo "Push files ${FULL_FILE} to HDFS Directory: ${TARGET_DIR}"
+        hdfs dfs -put ${BASE_OUTPUT_DIR}/$FULL_FILE $TARGET_DIR
 
     fi
 done
