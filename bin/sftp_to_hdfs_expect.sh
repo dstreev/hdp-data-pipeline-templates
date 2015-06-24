@@ -67,12 +67,13 @@ else
     GOOD_DT="${DT:0:4}-${DT:4:2}-${DT:6:2}"
 fi
 
-# Create a temp directory
-BASE_OUTPUT_DIR=$( mktemp -d /tmp/transfer_XXXXXXX )
 
 exec< $FEED_FILE
 
 while read line ; do
+    # Create a temp directory
+    BASE_OUTPUT_DIR=$( mktemp -d /tmp/transfer_XXXXXXX )
+
     ar=( $line )
 
     # Skip Comment lines
