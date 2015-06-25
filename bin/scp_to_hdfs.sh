@@ -100,7 +100,7 @@ while read line ; do
 
         echo "Getting ${FULL_FILE} files from scp ${SOURCE_DIR}"
 
-        scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${SOURCE_DIR}/${TARGET_FILENAME} ${BASE_OUTPUT_DIR}
+        scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${SOURCE_DIR}/${FULL_FILE} ${BASE_OUTPUT_DIR}
 
         echo "Remove old versions of $TARGET_DIR/$FULL_FILE"
         hdfs dfs -rm $TARGET_DIR/$FULL_FILE
