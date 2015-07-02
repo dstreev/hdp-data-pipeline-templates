@@ -92,6 +92,10 @@ while read line ; do
         PREFIX="${ar[1]}"
         TARGET_DIR="${ar[2]}"
 
+        if [ ! -d ${TARGET_DIR} ]; then
+            mkdir -p ${TARGET_DIR}
+        fi
+
         # Fetch Files from the SCP Site.
         FULL_FILE="${PREFIX}${GOOD_DT}\*.csv"
 
