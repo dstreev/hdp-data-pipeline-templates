@@ -97,11 +97,9 @@ while read line ; do
         fi
 
         # Fetch Files from the SCP Site.
-        FULL_FILE="${PREFIX}${GOOD_DT}\*.csv"
+        FULL_FILE="${PREFIX}${GOOD_DT}\*"
 
         echo "Getting ${FULL_FILE} files from scp ${SOURCE_DIR}"
-
-        set -x
 
         scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${SOURCE_DIR}/${FULL_FILE} ${TARGET_DIR}
 
