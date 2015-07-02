@@ -100,9 +100,10 @@ while read line ; do
         FULL_FILE="${PREFIX}${GOOD_DT}\\*"
 
         echo "Getting ${FULL_FILE} files from scp ${SOURCE_DIR}"
-        set -x
-        scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}\:${SOURCE_DIR}/${FULL_FILE} ${TARGET_DIR}
-        set +x
+
+        SCP_CMD="scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}\:${SOURCE_DIR}/${FULL_FILE} ${TARGET_DIR}"
+        echo "SCP Command: ${SCP_CMD}"
+        eval ${SCP_CMD}
     fi
 done
 
