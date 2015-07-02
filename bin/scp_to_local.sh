@@ -97,7 +97,7 @@ while read line ; do
         fi
 
         # Fetch Files from the SCP Site.
-        FULL_FILE="${PREFIX}${GOOD_DT}\*"
+        FULL_FILE="${PREFIX}${GOOD_DT}\\*"
 
         echo "Getting ${FULL_FILE} files from scp ${SOURCE_DIR}"
 
