@@ -9,6 +9,7 @@
 #######
 
 DATE_WITHOUT_DASHES=false
+YESTERDAY=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -32,6 +33,10 @@ while [ $# -gt 0 ]; do
       EXPECT_SCRIPT=$1
       shift
       ;;
+    --yesterday)
+      shift
+      YESTERDAY=true
+      ;;
     --date_without_dashes)
         shift
         DATE_WITHOUT_DASHES=true
@@ -54,6 +59,11 @@ if [ "$DT" == "" ]; then
     DT=`date +%Y%m%d`
 fi
 
+if [ "${YESTERDAY}" == "true" ]; then
+    DT=`date --date='-1 day' +%Y%m%d`
+fi
+
+
 if [ -f ${SSH_ENV} ]; then
     . ${SSH_ENV}
 else
@@ -71,9 +81,6 @@ fi
 exec< $FEED_FILE
 
 while read line ; do
-    # Create a temp directory
-    BASE_OUTPUT_DIR=$( mktemp -d /tmp/transfer_XXXXXXX )
-
     ar=( $line )
 
     # Skip Comment lines
@@ -84,15 +91,19 @@ while read line ; do
     if [ "${s1:0:${#s2}}" != "$s2" ]; then
 
         SRC_DIR="${ar[0]}"
-        SRC_FILE="${ar[1]}_${DT}*.csv"
-        TARGET_DIR="${ar[2]}"
+        SRC_FILE="${ar[1]}_${GOOD_DT}*.csv"
+        BASE_OUTPUT_DIR="${ar[2]}"
+
+        # Clean up BASE_OUTPUT_DIR
+        rm -rf ${BASE_OUTPUT_DIR
+
+        if [ ! -d ${BASE_OUTPUT_DIR} ]; then
+            mkdir -p ${BASE_OUTPUT_DIR}
+        fi
 
         echo "Getting  ${SRC_FILE} files from sftp"
 
         expect -f ${EXPECT_SCRIPT} ${SSH_PORT} ${SSH_USER} ${SSH_HOST} ${SRC_DIR} ${SRC_FILE} ${BASE_OUTPUT_DIR} ${SSH_PASSWORD}
-
-        echo "Push file(s) ${SRC_FILE} to HDFS Directory: ${TARGET_DIR}"
-        hdfs dfs -copyFromLocal -f ${BASE_OUTPUT_DIR}/*.* $TARGET_DIR
 
     fi
 done

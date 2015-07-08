@@ -12,6 +12,9 @@
 DATE_WITHOUT_DASHES=false
 # Whether to add date as an extension to the output file.
 DATE_EXT=true
+YESTERDAY=false
+
+cd `dirname $0`
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -34,6 +37,10 @@ while [ $# -gt 0 ]; do
       shift
       DT=$1
       shift
+      ;;
+    --yesterday)
+      shift
+      YESTERDAY=true
       ;;
     --no_date_ext)
       shift
@@ -65,6 +72,10 @@ done
 if [ "$DT" == "" ]; then
     # Set to current date by default when not specified
     DT=`date +%Y%m%d`
+fi
+
+if [ "${YESTERDAY}" == "true" ]; then
+    DT=`./prev_work_day.sh ${DT}`
 fi
 
 if [ -f ${SSH_ENV} ]; then
