@@ -46,7 +46,7 @@
         <fs>
             <name-node>${namenode}</name-node>
             <!--<mkdir path="${destinationDir}/${year}${month}${day}.${hour}${minute}${second}"/>-->
-            <move source="${sourceDir}/*.*" target="${destinationDir}"/>
+            <move source="${sourceDir}/${sourcePattern}" target="${destinationDir}"/>
         </fs>
         <ok to="ok"/>
         <!-- Failure will happen when a file conflict happens -->
