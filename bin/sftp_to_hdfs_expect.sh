@@ -9,6 +9,7 @@
 #######
 
 DATE_WITHOUT_DASHES=false
+YESTERDAY=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -26,6 +27,10 @@ while [ $# -gt 0 ]; do
       shift
       DT=$1
       shift
+      ;;
+    --yesterday)
+      shift
+      YESTERDAY=true
       ;;
     --expect)
       shift
@@ -52,6 +57,10 @@ done
 
 if [ "$DT" == "" ]; then
     DT=`date +%Y%m%d`
+fi
+
+if [ "${YESTERDAY}" == "true" ]; then
+    DT=`./prev_work_day.sh ${DT}`
 fi
 
 if [ -f ${SSH_ENV} ]; then
