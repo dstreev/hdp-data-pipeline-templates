@@ -55,8 +55,7 @@ while [ $# -gt 0 ]; do
       DATE_VAR=$1
       shift
       ;;
-    --previous-work-day)
-      shift
+    --previous-workday)
       PREVIOUS_DAY=true
       shift
       ;;
