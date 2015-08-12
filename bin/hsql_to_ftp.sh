@@ -13,6 +13,7 @@
 DATE_EXT=true
 HEADER=true
 HEADER_TEMPLATE=false
+PREVIOUS_DAY=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -54,6 +55,11 @@ while [ $# -gt 0 ]; do
       DATE_VAR=$1
       shift
       ;;
+    --previous-work-day)
+      shift
+      PREVIOUS_DAY=true
+      shift
+      ;;
     --beewrap_script)
       shift
       BEEWRAP_SCRIPT=$1
@@ -76,6 +82,16 @@ done
 if [ "$DT" == "" ]; then
     # Set to current date by default when not specified
     DT=`date +%Y%m%d`
+fi
+
+if [ "${PREVIOUS_DAY}" == "true" ]; then
+    DAY=$(date "--date=${DT}" +%a)
+
+    if [ "${DAY}" == "Mon" ]; then
+        DT=$(date "--date=${DT} - 3 days" +%Y%m%d)
+    else
+        DT=$(date "--date=${DT} - 1 days" +%Y%m%d)
+    fi
 fi
 
 # Set default if not specified.
