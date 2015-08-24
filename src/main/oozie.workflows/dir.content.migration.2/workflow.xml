@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-app xmlns="uri:oozie:workflow:0.5"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+              xsi:schemaLocation="uri:oozie:workflow:0.5 http://oozie.apache.org/schemas/workflow-0.5
+                uri:oozie:hive-action:0.5  http://oozie.apache.org/schemas/hive-action-0.5
+                uri:oozie:distcp-action:0.2  http://oozie.apache.org/schemas/distcp-action-0.2
+                uri:oozie:email-action:0.2 http://oozie.apache.org/schemas/email-action-0.2
+                uri:oozie:sqoop-action:0.4 http://oozie.apache.org/schemas/sqoop-action-0.4
+                uri:oozie:shell-action:0.3 http://oozie.apache.org/schemas/shell-action-0.3
+                uri:oozie:ssh-action:0.2 http://oozie.apache.org/schemas/ssh-action-0.2
+                uri:oozie:sla:0.2 http://oozie.apache.org/schemas/sla-0.2"
+              name="HDFS Directory Content Migration(2)-${id} ${sourceDir2} to ${destinationDir2}">
+
+    <!--
+       This workflow is intended to move the contents of one directory into another directory.
+
+       If files of similar name exist in the destination, the move will fail.  In which case,
+       a sub-directory will be created and the contents move into the target sub-directory.
+
+       USE CASE:  Night feed of files to a directory that need to be moved to another directory
+            for processing.  The incoming files are 'usually' unique, but may not be.  When they
+            not, they are move to a sub-directory to ensure uninterrupted processing.
+
+            At first, I was creating a new sub-directory for each import, but the problem is that
+            many of the transfer are only a single file.  And creating a directory for a single
+            file, each time the process runs, will lead to a performance impact when reading through
+            all the files by either MR or TEZ.  Hence, we only create a sub-directory when there
+            is a naming conflict.
+
+       WARNING: Because you COULD have duplicate files, you need to ensure the downstream logic handles
+            this by extracting only 'distinct' records, to prevent duplicates in the target tables.
+    -->
+
+    <start to="check-file"/>
+
+    <decision name="check-file">
+        <!-- Check that there are some files in the source directory -->
+        <switch>
+            <case to="move-data">${fs:dirSize(concat(namenode, sourceDir2)) gt 0}</case>
+            <default to="nothing-to-do"/>
+        </switch>
+    </decision>
+
+    <action name="move-data">
+        <fs>
+            <name-node>${namenode}</name-node>
+            <!--<mkdir path="${destinationDir}/${year}${month}${day}.${hour}${minute}${second}"/>-->
+            <move source="${sourceDir2}/${sourcePattern2}" target="${destinationDir2}"/>
+        </fs>
+        <ok to="ok"/>
+        <!-- Failure will happen when a file conflict happens -->
+        <error to="move-data-via-sub-dir"/>
+    </action>
+
+    <action name="move-data-via-sub-dir">
+        <fs>
+            <name-node>${namenode}</name-node>
+            <!--<mkdir path="${destinationDir}/${year}${month}${day}.${hour}${minute}${second}"/>-->
+            <move source="${sourceDir2}" target="${destinationDir2}/${timestamp}"/>
+            <mkdir path="${sourceDir2}"/>
+            <chmod path="${sourceDir2}" permissions="770"/>
+        </fs>
+        <ok to="ok"/>
+        <error to="failure"/>
+    </action>
+
+    <action name="nothing-to-do">
+        <email xmlns="uri:oozie:email-action:0.2">
+            <to>${successEmailTo}</to>
+            <subject>No Files in ${sourceDir} to Migrate</subject>
+            <body>Nothing to transfer at this time.</body>
+        </email>
+        <ok to="done"/>
+        <error to="done"/>
+    </action>
+
+    <action name="ok">
+        <email xmlns="uri:oozie:email-action:0.2">
+            <to>${successEmailTo}</to>
+            <subject>File Migration Succeeded</subject>
+            <body>Files migrated from ${sourceDir2} to ${destinationDir2}</body>
+        </email>
+        <ok to="done"/>
+        <error to="done"/>
+    </action>
+
+    <action name="failure">
+        <email xmlns="uri:oozie:email-action:0.2">
+            <to>${failureEmailTo}</to>
+            <subject>File Migration Error</subject>
+            <body>Failed to Migrate Files in ${sourceDir2} to ${destinationDir2}.
+                Workflow Failed: message[${wf:errorMessage(wf:lastErrorNode())}]
+            </body>
+        </email>
+        <ok to="kill"/>
+        <error to="kill"/>
+    </action>
+
+    <kill name="kill">
+        <message>"Error: message[${wf:errorMessage(wf:lastErrorNode())}]"
+        </message>
+    </kill>
+
+    <end name="done"/>
+</workflow-app>
