@@ -68,7 +68,7 @@
     <action name="nothing-to-do">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${successEmailTo}</to>
-            <subject>No Files in ${sourceDir} to Migrate</subject>
+            <subject>NOTHING TO DO: No Files in ${sourceDir} to Migrate</subject>
             <body>Nothing to transfer at this time.</body>
         </email>
         <ok to="done"/>
@@ -78,7 +78,7 @@
     <action name="ok">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${successEmailTo}</to>
-            <subject>File Migration Succeeded</subject>
+            <subject>SUCCESSFUL: File Migration Succeeded</subject>
             <body>Files migrated from ${sourceDir} to ${destinationDir}</body>
         </email>
         <ok to="done"/>

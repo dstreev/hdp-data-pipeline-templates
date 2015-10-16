@@ -48,7 +48,7 @@
     <action name="ok">
         <email xmlns="uri:oozie:email-action:0.2">
             <to>${successEmailTo}</to>
-            <subject>SUCCESS: Stage and Process for ${id}.</subject>
+            <subject>SUCCESSFUL: Stage and Process for ${id}.</subject>
             <body></body>
         </email>
         <ok to="done"/>
