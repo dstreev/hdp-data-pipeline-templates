@@ -9,7 +9,7 @@
 #######
 
 DATE_WITHOUT_DASHES=false
-
+CLEAN_TARGET_DIR=false
 while [ $# -gt 0 ]; do
   case "$1" in
     --env)
@@ -35,6 +35,10 @@ while [ $# -gt 0 ]; do
     --date_without_dashes)
         shift
         DATE_WITHOUT_DASHES=true
+        ;;
+    --clean_target_dir)
+        shift
+        CLEAN_TARGET_DIR=true
         ;;
     --check)
       CHECK="yes"
@@ -101,7 +105,12 @@ ftp -in <<EOF
 EOF
 
         echo "Remove old versions of $TARGET_DIR/$FULL_FILE"
-        hdfs dfs -rm $TARGET_DIR/$FULL_FILE
+        if [ "${CLEAN_TARGET_DIR}" = "true" ]; then
+            hdfs dfs -rm -r $TARGET_DIR
+            hdfs dfs -mkdir $TARGET_DIR
+        else
+            hdfs dfs -rm $TARGET_DIR/$FULL_FILE
+        fi
         echo "Push files ${FULL_FILE} to HDFS Directory: ${TARGET_DIR}"
         hdfs dfs -put ${BASE_OUTPUT_DIR}/$FULL_FILE $TARGET_DIR
 
