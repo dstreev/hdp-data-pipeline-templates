@@ -142,7 +142,7 @@ while read line ; do
         if [ "${HEADER_TEMPLATE}" == "true" ]; then
             HEADER_TEMPLATE_FILE="${ar[3]}"
             # Strip first line, because beeline ALWAYS outputs the header.
-            echo "$(tail -n +2 ${BASE_OUTPUT_DIR}/${TARGET_FILENAME})" > ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}
+            echo "$(tail -n +1 ${BASE_OUTPUT_DIR}/${TARGET_FILENAME})" > ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}
             # Create temp file
             TARGET_FILE_TMP=${TARGET_FILENAME}_new
             # Copy Template Header to Temp File
