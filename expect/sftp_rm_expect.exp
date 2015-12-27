@@ -1,0 +1,31 @@
+#!/usr/bin/expect -d
+
+set SSH_PORT [lindex $argv 0]
+set SSH_USER [lindex $argv 1]
+set SSH_HOST [lindex $argv 2]
+set DATA_DIR [lindex $argv 3]
+set DATA_FILE [lindex $argv 4]
+set TARGET_DIR [lindex $argv 5]
+set PASSWORD [lindex $argv 6]
+
+set timeout 10
+
+spawn sftp "-oPORT=$SSH_PORT" "$SSH_USER@$SSH_HOST"
+
+expect "Password:"
+
+send "$PASSWORD\n"
+
+expect "sftp>"
+
+send "cd $DATA_DIR\n"
+
+expect "sftp>"
+
+send "lcd $TARGET_DIR\n"
+
+expect "sftp>"
+
+send "mget $DATA_FILE\n"
+
+expect
