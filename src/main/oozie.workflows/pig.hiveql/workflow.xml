@@ -37,9 +37,8 @@
 
             <script>${scriptsBase}/${pigScript}</script>
 
-            <param>-x</param>
-            <param>tez</param>
-
+            <argument>-x</argument>
+            <argument>tez</argument>
         </pig>
         <ok to="refine"/>
         <error to="pig-error"/>
