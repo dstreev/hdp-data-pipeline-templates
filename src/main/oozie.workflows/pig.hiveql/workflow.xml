@@ -21,7 +21,7 @@
 
     <action name="prep">
         <fs>
-            <delete path="${workingDirectory}"/>
+            <delete path="${namenode}${workingDirectory}"/>
         </fs>
         <ok to="process"/>
         <error to="kill"/>
