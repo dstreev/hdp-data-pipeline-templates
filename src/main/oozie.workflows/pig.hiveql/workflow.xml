@@ -23,8 +23,8 @@
         <fs>
             <delete path="${workingDirectory}"/>
         </fs>
-        <error to="kill"/>
         <ok to="process"/>
+        <error to="kill"/>
     </action>
 
     <action name="process">
