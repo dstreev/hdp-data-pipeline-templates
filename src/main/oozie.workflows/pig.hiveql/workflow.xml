@@ -17,7 +17,15 @@
     -->
 
 
-    <start to="process"/>
+    <start to="prep"/>
+
+    <action name="prep">
+        <fs>
+            <delete path="${workingDirectory}"/>
+        </fs>
+        <error to="kill"/>
+        <ok to="process"/>
+    </action>
 
     <action name="process">
         <pig>
@@ -38,6 +46,8 @@
             <script>${scriptsBase}/${pigScript}</script>
             <argument>-x</argument>
             <argument>tez</argument>
+            <argument>-param</argument>
+            <argument>workingDirectory=${workingDirectory}</argument>
         </pig>
         <ok to="refine"/>
         <error to="pig-error"/>
