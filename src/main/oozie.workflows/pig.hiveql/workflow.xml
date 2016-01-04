@@ -36,10 +36,8 @@
             </configuration>
 
             <script>${scriptsBase}/${pigScript}</script>
-            <!-- Working on finding support for tez
             <argument>-x</argument>
             <argument>tez</argument>
-            -->
         </pig>
         <ok to="refine"/>
         <error to="pig-error"/>
