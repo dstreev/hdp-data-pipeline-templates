@@ -41,6 +41,10 @@
                     <name>tez.queue.name</name>
                     <value>${queueName}</value>
                 </property>
+                <property>
+                    <name>tez.lib.uris</name>
+                    <value>/hdp/apps/${hdpVersion}/tez/tez.tar.gz</value>
+                </property>
             </configuration>
 
             <script>${scriptsBase}/${pigScript}</script>
