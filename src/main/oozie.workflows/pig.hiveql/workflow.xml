@@ -48,8 +48,8 @@
             </configuration>
 
             <script>${scriptsBase}/${pigScript}</script>
-            <argument>-x</argument>
-            <argument>tez</argument>
+            <!-- <argument>-x</argument>
+            <argument>tez</argument> -->
             <argument>-param</argument>
             <argument>workingDirectory=${workingDirectory}</argument>
         </pig>
