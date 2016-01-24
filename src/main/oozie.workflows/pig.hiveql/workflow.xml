@@ -114,8 +114,8 @@
                 Workflow Failed: message[${wf:errorMessage(wf:lastErrorNode())}]
             </body>
         </email>
-        <ok to="kill"/>
-        <error to="kill"/>
+        <ok to="done"/>
+        <error to="done"/>
     </action>
 
     <action name="hive-error">
@@ -126,8 +126,8 @@
                 Workflow Failed: message[${wf:errorMessage(wf:lastErrorNode())}]
             </body>
         </email>
-        <ok to="kill"/>
-        <error to="kill"/>
+        <ok to="done"/>
+        <error to="done"/>
     </action>
 
     <kill name="kill">
