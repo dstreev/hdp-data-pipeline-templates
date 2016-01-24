@@ -24,7 +24,7 @@
             <delete path="${namenode}${workingDirectory}"/>
         </fs>
         <ok to="process"/>
-        <error to="kill"/>
+        <error to="process"/>
     </action>
 
     <action name="process">
