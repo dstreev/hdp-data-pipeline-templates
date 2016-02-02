@@ -60,9 +60,9 @@ echo "SQL File: ${SQL_FILE}"
 
 attachment=`mktemp`
 
-echo "Subject: ${SUBJECT} for ${DT}" > $TEMP_FILE
-echo "from: ${FROM}" >> $TEMP_FILE
-echo "to: ${EMAIL}" >> $TEMP_FILE
+#echo "Subject: ${SUBJECT} for ${DT}" > $TEMP_FILE
+#echo "from: ${FROM}" >> $TEMP_FILE
+#echo "to: ${EMAIL}" >> $TEMP_FILE
 
 ${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --nullemptystring=true --delimiterForDSV=, --silent-true -f ${SQL_FILE} | grep -v "^$" >> ${attachment}
 
