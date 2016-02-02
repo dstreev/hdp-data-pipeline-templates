@@ -59,7 +59,7 @@ echo "Subject: ${SUBJECT} for ${DT}" > $TEMP_FILE
 echo "from: ${FROM}" >> $TEMP_FILE
 echo "to: ${EMAIL}" >> $TEMP_FILE
 
-${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --delimiterForDSV=, -f ${SQL_FILE} | grep -v "^0\|^\." >> $TEMP_FILE
+${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --nullemptystring=true --delimiterForDSV=, --silent-true -f ${SQL_FILE} | grep -v "^$" >> $TEMP_FILE
 
 sleep 5
 
