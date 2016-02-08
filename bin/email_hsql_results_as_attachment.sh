@@ -58,13 +58,13 @@ fi
 echo "Reporting Date: ${DT}"
 echo "SQL File: ${SQL_FILE}"
 
-attachment=`mktemp`
+attachment=`mktemp`.csv
 
 #echo "Subject: ${SUBJECT} for ${DT}" > $TEMP_FILE
 #echo "from: ${FROM}" >> $TEMP_FILE
 #echo "to: ${EMAIL}" >> $TEMP_FILE
 
-${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --nullemptystring=true --delimiterForDSV=, --silent-true -f ${SQL_FILE} | grep -v "^$" >> ${attachment}
+${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --nullemptystring=true --delimiterForDSV=, --silent=true -f ${SQL_FILE} | grep -v "^$" >> ${attachment}
 
 
 
