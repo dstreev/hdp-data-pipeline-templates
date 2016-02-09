@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Run a HSQL Script and email results.
+HEADER=false
+
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -17,6 +19,12 @@ while [ $# -gt 0 ]; do
     --body)
       shift
       body=$1
+      shift
+      ;;
+    --header_template)
+      shift
+      HEADER=true
+      HEADER_TEMPLATE=$1
       shift
       ;;
     --from)
@@ -60,11 +68,15 @@ echo "SQL File: ${SQL_FILE}"
 
 attachment=`mktemp`.csv
 
+if [ "${HEADER}" == "true" ]; then
+    cat ${HEADER_TEMPLATE} > ${attachment}
+fi
+
 #echo "Subject: ${SUBJECT} for ${DT}" > $TEMP_FILE
 #echo "from: ${FROM}" >> $TEMP_FILE
 #echo "to: ${EMAIL}" >> $TEMP_FILE
 
-${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --nullemptystring=true --delimiterForDSV=, --silent=true -f ${SQL_FILE} | grep -v "^$" >> ${attachment}
+${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --nullemptystring=true --delimiterForDSV=, --silent=true --show-header=${HEADER} -f ${SQL_FILE} | grep -v "^$" >> ${attachment}
 
 
 
