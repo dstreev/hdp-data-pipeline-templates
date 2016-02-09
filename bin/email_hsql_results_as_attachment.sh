@@ -76,7 +76,7 @@ fi
 #echo "from: ${FROM}" >> $TEMP_FILE
 #echo "to: ${EMAIL}" >> $TEMP_FILE
 
-${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --nullemptystring=true --delimiterForDSV=, --silent=true --show-header=${HEADER} -f ${SQL_FILE} | grep -v "^$" >> ${attachment}
+${BEEWRAP_SCRIPT} --hivevar reporting_dt=${DT} --outputformat=dsv --nullemptystring=true --delimiterForDSV=, --silent=true --showHeader=${HEADER} -f ${SQL_FILE} | grep -v "^$" >> ${attachment}
 
 
 
