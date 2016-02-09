@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run a HSQL Script and email results.
-HEADER=false
+HEADER=true
 
 
 while [ $# -gt 0 ]; do
@@ -23,7 +23,7 @@ while [ $# -gt 0 ]; do
       ;;
     --header_template)
       shift
-      HEADER=true
+      HEADER=false
       HEADER_TEMPLATE=$1
       shift
       ;;
@@ -68,7 +68,7 @@ echo "SQL File: ${SQL_FILE}"
 
 attachment=`mktemp`.csv
 
-if [ "${HEADER}" == "true" ]; then
+if [ "${HEADER}" == "false" ]; then
     cat ${HEADER_TEMPLATE} > ${attachment}
 fi
 
