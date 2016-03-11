@@ -117,7 +117,7 @@ while read line ; do
 
         echo "Processing ${SCRIPT} - ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
 
-        HIVE_CMD="${BEEWRAP_SCRIPT} --hivevar ${DATE_VAR}=${GOOD_DT} --outputFormat=dsv --delimiterForDSV=';' --showHeader=${HEADER} -f ${SCRIPT} 2> /dev/null | grep -P -v '(^0\:\ .*)|(^\.\ \.\ .*)' > ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
+        HIVE_CMD="${BEEWRAP_SCRIPT} --hivevar ${DATE_VAR}=${GOOD_DT} --outputFormat=dsv --delimiterForDSV=';' --showHeader=${HEADER} --nullemptystring=true -f ${SCRIPT} 2> /dev/null | grep -P -v '(^0\:\ .*)|(^\.\ \.\ .*)' > ${BASE_OUTPUT_DIR}/${TARGET_FILENAME}"
 
         echo "Building Export with: ${HIVE_CMD}"
 
