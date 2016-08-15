@@ -43,7 +43,7 @@
             <jdbc-url>${jdbcUrl}</jdbc-url>
             <password>${jdbcPassword}</password>
 
-            <script>hive/${hqlFile}</script>
+            <script>${scriptsBase}/${hqlFile}</script>
             <!-- Generic Params -->
             <param>hiveParam1=${hiveParam1}</param>
             <param>hiveParam2=${hiveParam2}</param>
