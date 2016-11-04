@@ -186,6 +186,50 @@
 
         </hive>
 
+        <ok to="step5"/>
+        <error to="error"/>
+    </action>
+
+    <action name="step5">
+
+        <!-- Action -->
+        <hive xmlns="uri:oozie:hive-action:0.5">
+            <job-tracker>${jobtracker}</job-tracker>
+            <name-node>${namenode}</name-node>
+
+            <job-xml>${namenode}${hdfsHiveSiteXmlLocation}</job-xml>
+
+            <configuration>
+                <property>
+                    <name>mapreduce.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>tez.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>hive.execution.engine</name>
+                    <value>${hiveExecutionEngine}</value>
+                </property>
+            </configuration>
+
+            <script>${scriptsBase}/${hqlFile5}</script>
+            <!-- Generic Params -->
+            <param>hiveParam1=${hiveParam1}</param>
+            <param>hiveParam2=${hiveParam2}</param>
+            <param>hiveParam3=${hiveParam3}</param>
+            <!-- Details (optional) -->
+            <param>nullString=${nullString}</param>
+            <param>fieldsTerminatedBy=${fieldsTerminatedBy}</param>
+            <param>exportDir=${exportDir}</param>
+            <param>today=${year}-${month}-${day}</param>
+            <param>year=${year}</param>
+            <param>month=${month}</param>
+            <param>day=${day}</param>
+
+        </hive>
+
         <ok to="ok"/>
         <error to="error"/>
     </action>
