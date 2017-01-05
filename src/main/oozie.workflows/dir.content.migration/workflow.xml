@@ -59,7 +59,7 @@
             <!--<mkdir path="${destinationDir}/${year}${month}${day}.${hour}${minute}${second}"/>-->
             <move source="${sourceDir}" target="${destinationDir}/${timestamp}"/>
             <mkdir path="${sourceDir}"/>
-            <chmod path="${sourceDir}" permissions="770"/>
+            <chmod path="${sourceDir}" permissions="777"/>
         </fs>
         <ok to="ok"/>
         <error to="failure"/>
