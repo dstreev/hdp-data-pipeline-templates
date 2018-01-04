@@ -3,9 +3,11 @@
 #######
 # Get file from an SFTP site using an 'expect' script and put it on HDFS.
 #
+# Works on SINGLE Files, no Wildcards.
+#
 # Feed file format:
 #   SFTP_SOURCE_DIR FILE_PREFIX HDFS_TARGET_DIR
-#   /Data/Outbound/Curves USD_TREASURY_ /user/wre/wrelib/curves
+#   /Data/Outbound/Curves USD_TREASURY.csv /user/wre/wrelib/curves
 #######
 
 DATE_WITHOUT_DASHES=false
@@ -109,33 +111,23 @@ while read line ; do
     if [ "${s1:0:${#s2}}" != "$s2" ]; then
 
         SRC_DIR="${ar[0]}"
-        SRC_FILE="${ar[1]}_${DT}*.csv"
+        SRC_FILE="${ar[1]}"
         TARGET_DIR="${ar[2]}"
 
-        echo "Getting  ${SRC_FILE} files from sftp"
+        echo "Getting  ${SRC_FILE} file from sftp"
 
         expect -f ${EXPECT_SCRIPT} ${SSH_PORT} ${SSH_USER} ${SSH_HOST} ${SRC_DIR} ${SRC_FILE} ${BASE_OUTPUT_DIR} ${SSH_PASSWORD}
 
-        echo "Push file(s) ${SRC_FILE} to HDFS Directory: ${TARGET_DIR}"
-        hdfs dfs -copyFromLocal -f ${BASE_OUTPUT_DIR}/*.* $TARGET_DIR
-
-
         if [ "${APPEND_DATE_TO_TARGET}" == "false" ]; then
-            TARGET_FULL_FILE=${FULL_FILE}
+            TARGET_FULL_FILE="${FULL_FILE}"
         else
-            TARGET_FULL_FILE=${FULL_FILE}_${GOOD_DT}
+            TARGET_FULL_FILE="${FULL_FILE}.${GOOD_DT}"
         fi
 
+        mv ${BASE_OUTPUT_DIR}/${SRC_FILE} ${BASE_OUTPUT_DIR}/${TARGET_FULL_FILE}
 
-        scp -i ${SSH_KEY_FILE} -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${SOURCE_DIR}/${FULL_FILE} ${BASE_OUTPUT_DIR}/${TARGET_FULL_FILE}
-
-        echo "Remove old versions of $TARGET_DIR/$FULL_FILE"
-        hdfs dfs -rm $TARGET_DIR/$TARGET_FULL_FILE
-        echo "Push files ${FULL_FILE} to HDFS Directory: ${TARGET_DIR}"
-        hdfs dfs -put ${BASE_OUTPUT_DIR}/$TARGET_FULL_FILE $TARGET_DIR
-
-
-
+        echo "Push file ${TARGET_FULL_FILE} to HDFS Directory: ${TARGET_DIR}"
+        hdfs dfs -copyFromLocal -f ${BASE_OUTPUT_DIR}/${TARGET_FULL_FILE} ${TARGET_DIR}
 
     fi
 done

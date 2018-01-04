@@ -28,4 +28,8 @@ expect "sftp>"
 
 send "mget $DATA_FILE\n"
 
+expect "sftp>"
+
+send "rm $DATA_FILE\n"
+
 expect

@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <coordinator-app name="${id}" frequency="${frequency}" start="${startTime}" end="${endTime}" timezone="${timeZone}" xmlns="uri:oozie:coordinator:0.4">
+    
+    <datasets>
+        <async-dataset name="" sequence-type="" initial-version="">
+            <uri-template></uri-template>
+        </async-dataset>    
+    </datasets>
+    
+    <input-events>
+        <data-in name="" dataset="">
+            <
+        </data-in>
+    </input-events>
+    
     <action>
         <workflow>
             <app-path>${oozieWfAppPath}</app-path>
