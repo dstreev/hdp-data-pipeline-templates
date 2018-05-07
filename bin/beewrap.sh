@@ -7,4 +7,4 @@ fi
 
 . ${HOME}/.bee-env.sh
 
-beeline -u $URL -n $USER "$@"
+beeline -u $URL -n $USER -w $HOME/.hive-password "$@"
